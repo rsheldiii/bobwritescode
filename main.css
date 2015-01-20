@@ -1,0 +1,25 @@
+html{
+   font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;/* can you put this shit on multiple lines?*/
+}
+
+span{
+  background-color:white;
+  -webkit-transition: background-color 250ms linear;
+  -moz-transition: background-color 250ms linear;
+  -o-transition: background-color 250ms linear;
+  -ms-transition: background-color 250ms linear;
+  transition: background-color 250ms linear;
+}
+
+.stackcell{
+  padding-left:1px;
+  padding-right:1px;
+  border-right:1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.stack{
+  border-left: 1px solid black;
+}
+
