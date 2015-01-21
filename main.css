@@ -1,14 +1,28 @@
-html{
+*{
+	text-align : center;
+}
+
+
+html,textarea{
    font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;/* can you put this shit on multiple lines?*/
+}
+
+textarea{
+	text-align: left;
 }
 
 span{
   background-color:white;
-  -webkit-transition: background-color 250ms linear;
-  -moz-transition: background-color 250ms linear;
-  -o-transition: background-color 250ms linear;
-  -ms-transition: background-color 250ms linear;
-  transition: background-color 250ms linear;
+  x-webkit-transition: background-color 50ms linear;
+  x-moz-transition: background-color 50ms linear;
+  x-o-transition: background-color 50ms linear;
+  x-ms-transition: background-color 50ms linear;
+  xtransition: background-color 50ms linear;
+}
+
+.pulseme{
+  animation: pulse 1s 1 linear;
+  -webkit-animation: pulse 1s 1 ease-in-out;
 }
 
 .stackcell{
@@ -19,7 +33,22 @@ span{
   border-bottom: 1px solid black;
 }
 
-.stack{
+.stackcell:first-child{
   border-left: 1px solid black;
 }
 
+.separator{
+	clear: both;
+}
+
+@keyframes pulse {
+  0% { background-color: rgba(255,255,255,1); }
+  50% { background-color: rgba(0,0,255,1); }
+  100% { background-color: rgba(255,255,255,1); }
+}
+
+@-webkit-keyframes pulse {
+  0% { background-color: rgba(255,255,255,1); }
+  50% { background-color: rgba(0,0,255,1); }
+  100% { background-color: rgba(255,255,255,1); }
+}

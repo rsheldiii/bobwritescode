@@ -15,28 +15,57 @@
 		      		'                     >:^'
     			].join("\n");
 				
-				code = ['9>1+:    vhello,world!0',
-						    ' ,       0',
-						    ' |!-*68:g<',
+				code = ['7>1+:0gvhello,world!<a href = "http://www.google.com">czechss it out</a>, I can do HTML!0',
+						    ' ,     :',
+						    ' |!-*86<',
 						    ' @'].join("\n");
-				h = new BefungeSelector(code,"#output","#grid","#stack");
+							
+				code = ['2>:3g" "-!v\\  g30          <',
+						' |!`"O":+1_:.:03p>03g+:"O"`|',
+						' @               ^  p3\\" ":<',
+						'2 234567890123456789012345678901234567890123456789012345678901234567890123456789'].join("\n")
+				h = new BefungeSelector(code,undefined,"#output","#grid","#stack");
+				
+				
+				$("#input").val(h.extractGrid());
+				
+				$("#reload").click(function(){
+					h.exit();
+					h = new BefungeSelector($("#input").val(), $("#delay").val(), "#output", "#grid", "#stack");
+				});
 			});
 		</script>
 	</head>
 	<body>
+	
+		<div id = "header">
+			<p>site under construction</p>
+		</div>
+	
 		<div id = "ticker">
-			<div class = "container stack">
+			<div class = "container">
 				<div id = "stack" class = "stack"></div>
 			</div>
 		</div>
+		
+		<div class = "separator">------------------------------</div>
 
 		<div id = "content">
-			<p>site under construction</p>
 			<div id = "output">&nbsp;</div>
 		</div>
+		
+		<div class = "separator">------------------------------</div>
 
 		<div id = "bottom">
 			<div id = "grid">
+			</div>
+		
+			<div class = "separator">------------------------------</div>
+			
+			<div id = "controls">
+				<textarea id = "input" rows = "25" cols = "80" wrap="off"></textarea> <br/>
+				<label> Delay: <input id = "delay" value="7.5" size = "4"></label>
+				<button id = "reload">reload</button>
 			</div>
 		</div>
 	</body>

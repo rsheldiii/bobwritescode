@@ -8,7 +8,7 @@ function Befunge(verbose){
   this.program = new BefungeProgram();
   this.pointer = new Pointer();
 
-  this.exit = false;
+  this.exitState = false;
 }
 
 Befunge.prototype.load = function(code,step){
@@ -18,7 +18,7 @@ Befunge.prototype.load = function(code,step){
 
 Befunge.prototype.run = function(){
   var ret = "";
-  while (!this.exit){
+  while (!this.exitState){
     this.printVerbose();
 
     var t = this.executeCommand(this.getCommand());
@@ -47,12 +47,16 @@ Befunge.prototype.step = function(hookInstance,step){
   this.pointer.advance();
   this.checkBounds();
 
-	if (!this.exit){
+	if (!this.exitState){
 		var pthis = this;
 		setTimeout(function(){
 			pthis.step(hookInstance,step);
 		}, step);
 	}
+}
+
+Befunge.prototype.exit = function(){
+	this.exitState = true;
 }
 
 Befunge.prototype.printVerbose = function(){
@@ -123,6 +127,17 @@ BefungeProgram.prototype.setCell = function(position, value){
 	this.program[position] = value;
 }
 
+BefungeProgram.prototype.extractProgram = function(){
+	var ret = "";
+	for (var y = 0; y < this.height; y++){
+		 for (var x = 0; x < this.width; x++){
+			ret += this.getCommand([x,y]);
+		 }
+		 ret += "\n";
+	 }
+	 return ret;
+}
+
 
 //instruction pointer class
 
@@ -163,8 +178,10 @@ Pointer.prototype.advance = function(){
 }
 
 Pointer.prototype.setRandomDirection = function(){
-  var random = Math.round(Math.random(4));
-  this.direction = Pointer.directions[Object.keys(Pointer.directions)[random]]
+  var random = Math.floor(Math.random()*4);
+  console.log(random);
+  var direction = Object.keys(Pointer.directions)[random];
+  this.direction = Pointer.directions[direction];
 }
 
 
@@ -174,7 +191,7 @@ Pointer.prototype.setRandomDirection = function(){
 Commands = function(){}
 Commands.error = function(){
   console.log("Error Found");
-  this.exit = true;
+  this.exitState = true;
 }
 Commands.zero = function(){this.stack.push(0);}
 Commands.one = function(){this.stack.push(1);}
@@ -235,6 +252,7 @@ Commands.south = function(){
   this.pointer.setDirection("SOUTH");
 }
 Commands.randomDirection = function(){
+	console.log("wee")
   this.pointer.setRandomDirection();
 }
 Commands.hpop = function(){
@@ -281,12 +299,10 @@ Commands.put = function(){
 Commands.get = function(){
   var y = this.stack.pop();
   var x = this.stack.pop();
-  console.log([x,y]);
-  console.log(this.program.getCommand([x,y]));
   this.stack.push(this.program.getCommand([x,y]).charCodeAt(0));
 }
 Commands.end = function(){
-  this.exit = true;
+  this.exitState = true;
 }
 Commands.noop = function(){}
 //actual command listing

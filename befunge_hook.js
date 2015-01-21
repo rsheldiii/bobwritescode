@@ -1,18 +1,58 @@
-function BefungeSelector(code,outputdiv,codediv,stackdiv){
+function BefungeSelector(code,delay,outputdiv,codediv,stackdiv){//TODO: need more div control or break off div control to something else? god damn. need div control for input textarea
+  this.delay = delay || BefungeSelector.delay;
+  
   this.outputdiv = outputdiv;
   this.codediv = codediv;
   this.stackdiv = stackdiv;
 
+  this.position = [-1,-1];
+  this.previosPosition = [-1,-1];
+
   this.befunge = new Befunge(false);
   this.program = this.befunge.load(code);
+
   this.makeGrid();
 
-  this.befunge.step(this,BefungeSelector.delay);
+  this.befunge.step(this,this.delay);
 }
 
-BefungeSelector.delay = 250;
+BefungeSelector.delay = 7.5;
+
+BefungeSelector.prototype.step = function(closure){
+  if (this.exitState) return;
+	
+  var pointer = closure.pointer;
+  var output = closure.output;
+  var stack = closure.stack;
+  var command = closure.command;
+
+  if (output){
+	  this.makeOutput(output);
+  }
+  
+  if (command == "p"){
+	  this.makeGrid();//grid has changed
+  }
+
+  this.previousPosition = this.position;
+  this.position = pointer.getPosition();
+
+  //update grid to select correct cell
+  $("#" + this.createID(this.position)).css({"background-color" : "rgba(25,25,225,1)"});
+  if(this.previousPosition) $("#" + this.createID(this.previousPosition)).css({"background-color" : "rgba(255,255,255,1)"});
+
+
+  //command specific
+  if (command == "," || command == ".") $("#" + this.createID(this.position)).css({"background-color" : "green"});
+
+
+  //recreate stack
+  this.makeStack(stack);
+};
 
 BefungeSelector.prototype.makeGrid = function(){
+  $(this.codediv).empty();
+	
   var cellHTML = "<span></span>";
   var rowHTML = "<div></div>";
 
@@ -29,33 +69,9 @@ BefungeSelector.prototype.makeGrid = function(){
   }
 };
 
-
-BefungeSelector.prototype.createID = function(position){
-  return "row" + parseInt(position[1]) + "" + "col" + parseInt(position[0]) + "";
-};
-
-BefungeSelector.prototype.step = function(closure){
-  var pointer = closure.pointer;
-  var output = closure.output;
-  var stack = closure.stack;
-  var command = closure.command;
-
-  if (output) $(this.outputdiv).append(output);
-
-  this.previousPosition = this.currentPosition;
-  this.currentPosition = pointer.getPosition();
-
-  //update grid to select correct cell
-  $("#" + this.createID(this.currentPosition)).css({"background-color" : "blue"});
-  if (this.previousPosition) $("#" + this.createID(this.previousPosition)).css({"background-color" : "white"});
-  
-  //command specific
-  if (command == "," || command == ".") $("#" + this.createID(this.currentPosition)).css({"background-color" : "green"});
-  
-
-  //recreate stack
-  this.makeStack(stack);
-};
+ BefungeSelector.prototype.extractGrid = function(){
+	return this.program.extractProgram();
+ }
 
 BefungeSelector.prototype.makeStack = function(stack) {
   $(this.stackdiv).empty();
@@ -69,6 +85,30 @@ BefungeSelector.prototype.makeStack = function(stack) {
   }
 };
 
+BefungeSelector.prototype.makeOutput = function(output) {
+  if (output){
+    var html = $(this.outputdiv).attr("html") || "";
+    html += output;
+    $(this.outputdiv).attr("html",html);
+    $(this.outputdiv).html(html);
+  }
+};
+
+BefungeSelector.prototype.clearOutput = function(){
+	$(this.outputdiv).attr("html", "");
+}
+
+BefungeSelector.prototype.createID = function(position){
+  return "row" + parseInt(position[1]) + "" + "col" + parseInt(position[0]) + "";
+};
+
 BefungeSelector.prototype.finish = function(){
   console.log("output ended!");
+}
+
+BefungeSelector.prototype.exit = function(){
+	this.exitState = true;
+	//you must call this in order to tell the befunge interpreter to stop interpreting
+	this.clearOutput();
+	this.befunge.exit();
 }
